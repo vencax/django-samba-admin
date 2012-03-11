@@ -1,0 +1,19 @@
+rem set clocks
+net time \\{{ shareServer }} /set /y
+
+rem mount all requested shares
+
+{% for letter, s in sharesToMount.items %}
+rem delete existing if any
+net use {{ letter }}: /delete /y
+
+rem mount it again
+net use {{ letter }}: \\{{ shareServer }}\{{ s }}
+{% endfor %}
+
+{% for printer in printersToMount %}
+rem here I WOULD LIKE to check if the printer is already connected but HOW!!!????
+rundll32 printui.dll,PrintUIEntry /y /q /n "\\{{ shareServer }}\{{ printer }}"
+{% endfor %}
+
+{% block extrashares %}{% endblock %}

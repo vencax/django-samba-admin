@@ -1,0 +1,36 @@
+Introduction
+==============
+
+This project has to generate login scripts for windoze users base on their 
+usernames and membership in system groups stored in sql database managed
+by django-sql-nss-admin (see.: https://github.com/vencax/django-sql-nss-admin).
+Maybe support for samba provisioning can be added if somebody wants.
+But is is samba webmin job. 
+
+Installation
+==============
+
+1. Clone the read-only repo
+
+     git clone git@github.com:vencax/django-sql-nss-admin.git
+
+2. Install the dependencies via PIP.
+
+     pip install -r requirements.txt
+
+3. Add nss_admin into your INSTALLED_APPS.
+
+4. Include nss_admin.urls into your root url conf
+
+     url(r'^nss_admin/', include('nss_admin.urls')),
+		
+5. Optionaly add following configs into settings
+
+	DEFAULT_SHELL = '/bin/bash' - default shell associated with a user 
+	PGINA_HACKS = True	- if you plan use PGina for auth on Win machines (hack - see code ..)
+	UID_RANGE_BEGIN = 5000 - begin of interval users ID taken from (prevent mangling with system account IDs) 
+	GID_RANGE_BEGIN = 5000 - begin of interval groups ID taken from (prevent mangling with system groups IDs)
+				
+6. You are done
+
+
