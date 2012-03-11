@@ -12,7 +12,7 @@ Installation
 
 1. Clone the read-only repo
 
-     git clone git@github.com:vencax/django-sql-nss-admin.git
+     git clone git://github.com/vencax/django-samba-admin.git
 
 2. Install the dependencies via PIP.
 
@@ -20,16 +20,23 @@ Installation
 
 3. Add nss_admin into your INSTALLED_APPS.
 
-4. Include nss_admin.urls into your root url conf
+4. Include samba_admin.urls into your root url conf
 
-     url(r'^nss_admin/', include('nss_admin.urls')),
+     url(r'^samba_admin/', include('samba_admin.urls')),
 		
-5. Optionaly add following configs into settings
+5. Add following configs into settings (change according your needs)
 
-	DEFAULT_SHELL = '/bin/bash' - default shell associated with a user 
-	PGINA_HACKS = True	- if you plan use PGina for auth on Win machines (hack - see code ..)
-	UID_RANGE_BEGIN = 5000 - begin of interval users ID taken from (prevent mangling with system account IDs) 
-	GID_RANGE_BEGIN = 5000 - begin of interval groups ID taken from (prevent mangling with system groups IDs)
+	SAMB_SHARES_MAPPING = { <nameofsystemgrouop> : (<mountLetter>, <sharename>), ... }
+	SAMB_PRINTERS_MAPPING = { <sharedPrinterName> : [ group1, group2] }
+	
+	Example:
+	SAMB_SHARES_MAPPING = {
+	    'accounting' : ('U', 'accounting_stuff'),
+	    'development' : ('T', 'development_stuff'),
+	}
+	SAMB_PRINTERS_MAPPING = {
+	    'kyocera' : ['accounting', 'development'],
+	}
 				
 6. You are done
 
