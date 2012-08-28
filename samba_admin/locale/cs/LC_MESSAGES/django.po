@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-28 18:38+0200\n"
+"POT-Creation-Date: 2012-08-28 18:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,7 +25,7 @@ msgstr "server"
 msgid "either IP address or name"
 msgstr "buď IP adresa nebo doménové jméno"
 
-#: models.py:11 models.py:27
+#: models.py:11 models.py:31
 msgid "path"
 msgstr "cesta"
 
@@ -41,6 +41,14 @@ msgstr "uživatel"
 msgid "passwd"
 msgstr "heslo"
 
-#: models.py:25
+#: models.py:19
+msgid "share connection"
+msgstr "připojení ke sdílenému disku"
+
+#: models.py:20
+msgid "share connections"
+msgstr "připojení ke sdíleným diskům"
+
+#: models.py:29
 msgid "name"
 msgstr "jméno"

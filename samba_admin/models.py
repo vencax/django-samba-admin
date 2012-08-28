@@ -14,7 +14,11 @@ class ShareConnection(models.Model):
     user = models.CharField(verbose_name=_('user'), max_length=16, blank=True)
     passwd = models.CharField(verbose_name=_('passwd'), max_length=16, blank=True)
     groups = models.ManyToManyField(SysGroup)
-        
+
+    class Meta:
+        verbose_name = _('share connection')
+        verbose_name_plural = _('share connections')
+
     def __unicode__(self):
         return '%s: \\%s\%s' % (self.letter, self.server, self.path)
 
@@ -22,7 +26,7 @@ class SambaShare(models.Model):
     """
     Represent a samba share.
     """
-    name = models.CharField(verbose_name=_('name'), max_length=32, unique=True, 
+    name = models.CharField(verbose_name=_('name'), max_length=32, unique=True,
                             primary_key=True)
     path = models.CharField(verbose_name=_('path'), max_length=32)
 
