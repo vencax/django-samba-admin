@@ -2,7 +2,7 @@ from django.template import RequestContext
 from django.template import loader
 from django.http import HttpResponse
 from django.conf import settings
-from nss_admin.models import SysUser, SysMembership
+from nss_admin.models import SysUser, SysMembership, SysGroup
 
 from .models import ShareConnection
 
@@ -15,7 +15,7 @@ customOsMapping = getattr(settings, 'CUSTOM_OS_MAPPING', {})
 osMapping.update(customOsMapping)
 
 printersMapping = getattr(settings, 'SAMB_PRINTERS_MAPPING', {})
-homesServer = getattr(settings, 'HOMES_SERVER', 'lserver')
+shareServer = getattr(settings, 'SHARE_SERVER', 'lserver')
 
 def logonScript(request, username, os):
     """
@@ -25,13 +25,15 @@ def logonScript(request, username, os):
         u = SysUser.objects.get(user_name=username)
         sharesToMount = _getSharesToMount(u)
         printersToMount = _getPrintersToMount(u)
+        userGroups = [group.group_name for group in _getUserGroups(u)]
         
         template = 'samba_admin/%s.html' % osMapping[os]
         
         script = loader.render_to_string(template, {
             'sharesToMount' : sharesToMount,
             'printersToMount' : printersToMount,
-            'homesServer' : homesServer,
+            'shareServer' : shareServer,
+            'userGroups': userGroups,
         }, RequestContext(request))
         
         # make f*cking M$ endlines
@@ -42,11 +44,15 @@ def logonScript(request, username, os):
     return HttpResponse(script)
   
 # ------------------------------ privates ------------------------------------
+
+def _getUserGroups(user):
+    uMships = SysMembership.objects.filter(user=user)
+    uMships = uMships.values_list('group_id', flat=True)
+    userGroups = SysGroup.objects.filter(group_id__in=uMships)
+    return tuple(userGroups) + (user.gid, )
   
 def _getSharesToMount(user):
-    userGroups = SysMembership.objects.filter(user=user)
-    userGroups = tuple(userGroups) + (user.gid, )
-    return ShareConnection.objects.filter(groups__in=userGroups)
+    return ShareConnection.objects.filter(groups__in=_getUserGroups(user))
   
 def _getPrintersToMount(user):
     printersToMount = []

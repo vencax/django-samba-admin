@@ -4,17 +4,20 @@ net use * /delete /y
 rem set clocks
 net time \\{{ shareServer }} /set /y
 
-rem mount all requested shares
-
-timeout 5
+rem wait 3 secs
+ping 1.1.1.0 -w 1 -n 3 > NIL
 
 {% for s in sharesToMount %}
 net use {{ s.letter }}: \\{{ s.server }}\{{ s.path }} {% if s.user %}/user:{{ s.user }}{% endif %} {% if s.passwd %}{{ s.passwd }}{% endif %}
 {% endfor %}
-net use H: \\{{ homesServer }}\%USERNAME%
+net use H: \\{{ shareServer }}\%USERNAME%
 
 {% for printer in printersToMount %}
 rem here I WOULD LIKE to check if the printer is already connected but HOW!!!????
 rem rundll32 printui.dll,PrintUIEntry /dl /n {{ printer }} /c%COMPUTERNAME%
-rundll32 printui.dll,PrintUIEntry /y /q /n "\\{{ homesServer }}\{{ printer }}"
+rundll32 printui.dll,PrintUIEntry /y /q /n "\\{{ shareServer }}\{{ printer }}"
+{% endfor %}
+
+{% for g in userGroups %}
+\\{{ shareServer }}\netlogon\{{ g }}.bat 
 {% endfor %}
