@@ -5,7 +5,7 @@ rem set clocks
 net time \\{{ shareServer }} /set /y
 
 rem wait 3 secs
-ping 1.1.1.0 -w 1 -n 3 > NIL
+ping 1.1.1.0 -w 1 -n 2 > NUL
 
 {% for s in sharesToMount %}
 net use {{ s.letter }}: \\{{ s.server }}\{{ s.path }} {% if s.user %}/user:{{ s.user }}{% endif %} {% if s.passwd %}{{ s.passwd }}{% endif %}
@@ -19,5 +19,5 @@ rundll32 printui.dll,PrintUIEntry /y /q /n "\\{{ shareServer }}\{{ printer }}"
 {% endfor %}
 
 {% for g in userGroups %}
-\\{{ shareServer }}\netlogon\{{ g }}.bat 
+if exist \\{{ shareServer }}\netlogon\{{ g }}.bat \\{{ shareServer }}\netlogon\{{ g }}.bat
 {% endfor %}
