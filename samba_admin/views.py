@@ -7,7 +7,7 @@ from nss_admin.models import SysUser, SysMembership, SysGroup
 from .models import ShareConnection
 
 osMapping = {
-    'Windows_NT' : 'xp'
+    'Windows_NT': 'xp'
 }
 
 # this allow to add another OS mapping without modifying this source
@@ -16,6 +16,7 @@ osMapping.update(customOsMapping)
 
 printersMapping = getattr(settings, 'SAMB_PRINTERS_MAPPING', {})
 shareServer = getattr(settings, 'SHARE_SERVER', 'lserver')
+
 
 def logonScript(request, username, os):
     """
@@ -26,34 +27,37 @@ def logonScript(request, username, os):
         sharesToMount = _getSharesToMount(u)
         printersToMount = _getPrintersToMount(u)
         userGroups = [group.group_name for group in _getUserGroups(u)]
-        
+
         template = 'samba_admin/%s.html' % osMapping[os]
-        
+
         script = loader.render_to_string(template, {
-            'sharesToMount' : sharesToMount,
-            'printersToMount' : printersToMount,
-            'shareServer' : shareServer,
+            'sharesToMount': sharesToMount,
+            'printersToMount': printersToMount,
+            'shareServer': shareServer,
             'userGroups': userGroups,
         }, RequestContext(request))
-        
+
         # make f*cking M$ endlines
         script = script.replace('\n', '\r\n')
     except Exception:
         script = ''
-    
+
     return HttpResponse(script)
-  
+
 # ------------------------------ privates ------------------------------------
+
 
 def _getUserGroups(user):
     uMships = SysMembership.objects.filter(user=user)
     uMships = uMships.values_list('group_id', flat=True)
     userGroups = SysGroup.objects.filter(group_id__in=uMships)
     return tuple(userGroups) + (user.gid, )
-  
+
+
 def _getSharesToMount(user):
     return ShareConnection.objects.filter(groups__in=_getUserGroups(user))
-  
+
+
 def _getPrintersToMount(user):
     printersToMount = []
     for g in user.sysgroup_set.all():
@@ -61,5 +65,5 @@ def _getPrintersToMount(user):
             if g.group_name.lower() in allowedGroups:
                 printersToMount.append(printer)
     return printersToMount
-  
+
 # ------------------------------ EOF ------------------------------------------
