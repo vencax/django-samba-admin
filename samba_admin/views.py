@@ -1,10 +1,13 @@
+from django.conf import settings
+from django.http import HttpResponse
 from django.template import RequestContext
 from django.template import loader
-from django.http import HttpResponse
-from django.conf import settings
+from django.views.decorators.cache import never_cache
+
 from nss_admin.models import SysUser, SysMembership, SysGroup
 
 from .models import ShareConnection
+
 
 osMapping = {
     'Windows_NT': 'xp'
@@ -18,6 +21,7 @@ printersMapping = getattr(settings, 'SAMB_PRINTERS_MAPPING', {})
 shareServer = getattr(settings, 'SHARE_SERVER', 'lserver')
 
 
+@never_cache
 def logonScript(request, username, os):
     """
     Prepares logon script based on user and operating sys.
@@ -55,7 +59,8 @@ def _getUserGroups(user):
 
 
 def _getSharesToMount(user):
-    return ShareConnection.objects.filter(groups__in=_getUserGroups(user))
+    shrs = ShareConnection.objects.filter(groups__in=_getUserGroups(user))
+    return shrs.distinct()
 
 
 def _getPrintersToMount(user):
