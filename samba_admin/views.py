@@ -43,8 +43,8 @@ def logonScript(request, username, os):
 
         # make f*cking M$ endlines
         script = script.replace('\n', '\r\n')
-    except Exception:
-        script = ''
+    except Exception, e:
+        script = 'rem error in script creation: %s' % str(e)
 
     return HttpResponse(script)
 
